@@ -4,12 +4,12 @@ import { bgYellow, yellow, bgRed, red } from 'chalk';
 
 let vercelVersion
 try {
-  // detect if the `vercel CLI` is installed with a version lower than 30.0.0
-  vercelVersion = execSync("$npm_execpath vercel -v", { stdio: 'pipe' }).toString().trim();
+  // try a general `vercel -v`
+  vercelVersion = execSync("vercel -v", { stdio: 'pipe' }).toString().trim();
 } catch (e) {
-  // try just a general `vercel -v` too.
   try {
-    vercelVersion = execSync("vercel -v", { stdio: 'pipe' }).toString().trim();
+    // If that failed, check for a locally installed package too.
+    vercelVersion = execSync("$npm_execpath vercel -v", { stdio: 'pipe' }).toString().trim();
   } catch (e) {
     console.warn(bgYellow.black(" WARN "), yellow("No vercel installation found"));
     process.exit(0);
@@ -18,6 +18,6 @@ try {
 
 if (lt(vercelVersion, '33.0.0')) {
   console.error(bgRed(" ERROR "), red(
-    `Must have 'vercel' CLI installed with a version greater than 30.0.0. Found ${vercelVersion}`));
+    `Must have 'vercel' CLI installed with a version greater than 33.0.0. Found ${vercelVersion}`));
   process.exit(1);
 }
